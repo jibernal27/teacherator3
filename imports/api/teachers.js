@@ -4,6 +4,10 @@ import { check } from 'meteor/check';
  
 export const Teachers = new Mongo.Collection('teachers');
  
+/** Eventualmente un cliente puede obtener acceso a este archivo ya que esta en imports.
+algo como la publicación de datos deberia hacerse en un archivo como publications.js en la carpeta
+server. De lo contrario un cliente podria modificar el código y acceder a cosas que uno no desea.
+*/
 if (Meteor.isServer) {
   // This code only runs on the server
     Meteor.publish('teachers', function teachersPublication() {
@@ -13,6 +17,10 @@ if (Meteor.isServer) {
 
 // Deny all client-side updates on the Teachers collection, 
 // just in case removing insecure and autopublish is not enough
+
+/**Esto esta bien si exsten metodos en el lado del servidor que lo hagan, pero no los vi explicitos
+entonces pasa lo mismo
+**/
 Teachers.deny({
     insert() { return true; },
     update() { return true; },
@@ -24,12 +32,20 @@ Teachers.deny({
 //Meteor.users.deny({
 //    update() { return true; }
 //});
+/**
+De nuevo creo que los metodos deberian estar en la carpeta server en un archivo que se llame
+metos.js
+**/
 
 Meteor.methods({
     'teachers.addReview'(teacher, review) {
         check(teacher, Object);
 
         // Redundant argument validation to ensure data integrity
+        /**
+        ¿Enserio toca pasar todo esto?
+        Pero veo que solo esta usando como el ID del profesor y no más
+        **/
         check(teacher, {
             _id: Meteor.Collection.ObjectID,
             profile_pic_url: String,
